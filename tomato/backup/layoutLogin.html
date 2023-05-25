@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org" 
+       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+       
+<head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" th:href="@{/bootstrap/5.0.2/css/bootstrap.min.css}"/>
+    <script th:src="@{/bootstrap/5.0.2/js/bootstrap.min.js}"></script>
+    
+    <style>
+.error 
+{
+	padding: 10px;
+	color: red;
+}
+
+.msg 
+{
+	padding:10px;
+	color:red;
+}
+
+#login-box 
+{
+	width: 250px;
+	padding: 30px;
+	margin: 0px auto;
+	background: #eee;
+	border: 1px solid #333;
+	display: flex;
+	align-items:center;
+	justify-content: center;
+
+}
+
+#loginFrag
+{
+	width:100%; 
+	height:calc(100vh - 200px); 
+	display: flex;
+	align-items:center;
+	justify-content: center;
+}	
+	
+			
+td 
+{ 
+	height: 30px; 
+}			
+</style>
+    
+    
+</head>
+<body>
+
+    <!-- 상단바-->
+    <div th:replace="fragments/header :: header"></div>
+    	
+    <!-- 본문-->
+    <!--  <div layout:fragment="content"></div> -->
+    <div th:replace="fragments/loginFormFrag :: loginFormFrag"></div>
+    	
+    <!-- 공통 하단-->
+   	<div th:replace="fragments/footer :: footer"></div>
+
+</body>
+</html>

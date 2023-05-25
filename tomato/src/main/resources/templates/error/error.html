@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>에러처리 페이지</title>
+</head>
+<body>
+<script type="text/javascript">
+alert('[[${error_msg}]]');
+location.href="[[${move_page}]]";
+</script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tomato.mapper.member">
+ 	
+ 	<!-- 회원 가입 -->
+	<insert id="insert" parameterType="com.tomato.board.membervo.MemberVO">
+		INSERT INTO MEMBER VALUES(
+		#{id},
+		#{pwd},
+		#{name},
+		#{phone},
+		#{email},
+		#{birthday},
+		#{postadd},
+		#{address},
+		#{detailaddr},
+		sysdate,
+		1)
+	</insert>
+	
+	<!-- 회원 ROLE 생성 -->
+	<insert id="insertRole" parameterType="com.tomato.common.vo.Role">
+		INSERT INTO USER_ROLES VALUES(
+		USER_ROLES_SEQ.NEXTVAL,
+		#{username},
+		#{role})
+	</insert>
+	
+	<update id="update" parameterType="com.tomato.board.membervo.MemberVO">
+		UPDATE INTO MEMBER SET 
+			pwd = #{pwd},
+			name = #{name},
+			phone = #{phone},	
+			email = #{email},
+			birthday = #{birthday},
+			postadd = #{postadd},
+			address = #{address},
+			detailaddr = #{detailaddr},
+			joinday =sysdate
+		WHERE id =#{id}
+	</update>
+	
+	<delete id="delete" parameterType="String">
+		DELETE FROM MEMBER WHERE id =#{id} 
+	</delete>
+	
+														
+	<select id="select" parameterType="String" resultType="com.tomato.board.membervo.MemberVO">
+		SELECT * FROM MEMBER WHERE id=#{id}
+	</select>
+	
+	<select id="selectByFlds" parameterType="String" resultType="com.tomato.board.membervo.MemberVO">
+		SELECT * FROM MEMBER WHERE 
+		${subSql}
+	</select>
+	
+	<select id="hasMember" parameterType="String" resultType="int">
+		SELECT COUNT(*) FROM MEMBER WHERE id = #{id}
+	</select>
+	
+	<select id="isMember" parameterType="hashmap" resultType="int">
+		SELECT COUNT(*) FROM MEMBER WHERE ${fld} = #{val}
+	</select>
+
+</mapper>
