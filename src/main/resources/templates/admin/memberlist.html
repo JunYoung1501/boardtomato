@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ko" 
+	  xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{layout/layout}">
+<head>
+<meta charset="UTF-8">
+<title>관리자 페이지</title>
+
+<script type="text/javascript">
+
+/*  관리자 페이지  */
+window.onload = function() {
+	//role(롤) 개별 수정
+	var role_update_btns = document.querySelectorAll("[id^=role_update_btn_]");
+	
+	for (var role_update_btn of role_update_btns) {
+		
+		role_update_btn.onclick = function(e) {
+			alert("롤수정")
+			console.log("role(롤) 수정 클릭 : " + e.currentTarget.id);
+			
+			var btn_id = e.currentTarget.id;
+			var member_id = btn_id.substring("role_update_btn_".length);
+			
+			var role_val1_checked = document.getElementById("role1_"+member_id).checked;
+			var role_val2_checked = document.getElementById("role2_"+member_id).checked;
+			var role_val1 = document.getElementById("role1_"+member_id).value;
+			var role_val2 = document.getElementById("role2_"+member_id).value;
+			
+			
+			console.log("아이디 : " + member_id);
+			/* console.log("롤(role) 정보-1(체크 여부) : " + role_val1_checked);
+			console.log("롤(role) 정보-2(체크 여부) : " + role_val2_checked);
+			console.log("롤(role) 정보-1(기존) : " + role_val1);
+			console.log("롤(role) 정보-2(기존) : " + role_val2); */
+			
+			// 체크 상태에 따른 값 재할당
+			role_val1 = role_val1_checked == true ? 'admin' : '';
+			role_val2 = role_val2_checked == true ? 'user' : '';
+			
+			console.log("롤(role) 정보-1(변경) : " + role_val1);
+			console.log("롤(role) 정보-2(변경) : " + role_val2);
+			
+			if (confirm('롤(role)을 정말 변경하시겠습니까?')) {
+				
+				// AJAX
+				const xhr = new XMLHttpRequest();
+				
+				xhr.onreadystatechange = () => {
+				    
+					if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+						
+						console.log("응답 : " + xhr.responseText);
+						
+						// if (xhr.responseText.trim() == '다른 회원과 중복되어 사용할 수 없는 메일입니다.') {
+							
+							// 이전 메일값을 불러와서 복원 : 임시 hidden 필드에 보관됨
+							// document.getElementById("email_"+email_id).value 
+							//	= document.getElementById("old_email_"+email_id).value; 
+							
+						// } 
+						
+						if (xhr.responseText.trim() != '') {
+							
+							alert(xhr.responseText); // 메시징
+							
+						}
+						
+						
+				    } // 200
+				    
+				} //
+				
+				console.log("인자들 : " + "id="+member_id+"&role1="+role_val1+"&role2="+role_val2);
+				
+				xhr.open("POST", "/tomato/admin/memberRoleUpdate.do", true);
+				xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+				xhr.send("id="+member_id+"&role1="+role_val1+"&role2="+role_val2+"&[[${_csrf.parameterName}]]=[[${_csrf.token}]]");
+				
+			} else { // 취소
+				
+			} //
+			
+		} //
+		
+	} // for
+}
+</script>
+</head>
+
+<body>
+
+<!-- 회원정보 테이블  -->
+<div layout:fragment="content" class="mx-auto d-flex justify-content-center align-items-center" style="width:100%; height:calc(100vh - 200px);">
+	<!-- 1 -->
+	<div class="mx-auto d-flex flex-column justify-content-center align-items-center  w-100">
+		
+			<!-- 테이블 -->
+			<table class="table table-hover" style="width:90%">
+				<thead class="table">
+					<tr>
+						 <th scope="col">no</th>
+						 <th scope="col">회원 아이디</th>
+						 <th scope="col">이름</th>
+						 <th scope="col">휴대전화</th>
+						 <th scope="col">이메일</th>
+						 <th scope="col">생일</th>
+						 <th scope="col">우편번호</th>
+						 <th scope="col">주소</th>
+						 <th scope="col">상세주소</th>
+						 <th scope="col">가입날자</th>
+						 <th scope="col">권한</th>
+						 <th scope="col">활동여부</th>
+					</tr>
+				</thead>
+				
+				<tbody>
+					<tr th:each="memberVO, st : ${memberList}">
+						 <td scope="col">[[${(pageVO.page-1)*pageVO.limit+st.count}]]</td>
+						 <td scope="col" style="width:150px">[[${memberVO.id}]]</td>
+						 <td scope="col" style="width:100px">[[${memberVO.name}]]</td>
+						 <td scope="col">[[${memberVO.phone}]]</td>
+						 <td scope="col">[[${memberVO.email}]]</td>
+						 <td scope="col">[[${memberVO.birthday}]]</td>
+						 <td scope="col" style="width:100px">[[${memberVO.postadd}]]</td>
+						 <td scope="col" style="width:200px" class="text-truncate">[[${memberVO.address}]]</td>
+						 <td scope="col" style="width:200px" class="text-truncate">[[${memberVO.detailaddr}]]</td>
+						 <td scope="col" style="width:150px">[[${#dates.format(memberVO.joinday,'yyyy-MM-dd HH:mm:ss')}]]</td>
+						 <td scope="col" style="width:150px">
+						 	
+						 	<!-- ROLE 없는경우(비회원) -->
+						 	<div th:if="${memberVO.role == null}">
+						 		<input  type="checkbox" class="form-check-input"  th:id="${'role1_'+{memberVO.id}}" name="role"/>
+						  		<label class="form-check-label" th:for="${'role1_'+{memberVO.id}}">관리자</label> <br>	
+							 	<input type="checkbox" class="form-check-input" th:id="${'role2_'+{memberVO.id}}" name="role"/>
+			   				    <label class="form-check-label" th:for="${'role2_'+{memberVO.id}}">사용자</label>
+						 	</div>
+						 	
+						 	<!--  회원인 경우 -->
+							<div th:if="${memberVO.role != null}">
+								<input th:with="admin=(${#strings.contains(memberVO.role,'ROLE_ADMIN') == true ? 'admin' : ''})" 
+									   type="checkbox" class="form-check-input"  th:id="${'role1_'+{memberVO.id}}" name="role"
+									   th:value="${admin}" th:checked="${admin=='admin'}"/>
+							    <label class="form-check-label" th:for="${'role1_'+{memberVO.id}}">관리자</label> <br>
+								
+								<input th:with="user=(${#strings.contains(memberVO.role,'ROLE_USER') == true ? 'user' : ''})"
+									   type="checkbox" class="form-check-input" th:id="${'role2_'+{memberVO.id}}" name="role"
+									   th:value="${user}" th:checked="${user=='user'}"/>
+							   <label class="form-check-label" th:for="${'role2_'+{memberVO.id}}">사용자</label>
+						   </div>
+						   
+						   <!-- ROLE 수정 버튼 -->
+							<i th:id="${'role_update_btn_'+{memberVO.id}}" title="수정" class="bi bi-check2-circle"></i>
+							status=[[${memberVO.status}]]
+						</td>
+						 <td scope="col" style="width:100px">[[${memberVO.status == 1 ? "활동중" : "휴면"}]]</td>
+					</tr>
+				</tbody>
+			</table>
+			<!-- //테이블 -->
+			
+			<!-- 페이징 /메뉴 -->
+			<table class="table table-borderless mt-3 mb-0" style="width:75%;">
+				<tr>
+					<td  style="width:50%">
+						<div class="d-flex justify-content-between" style="width:100%">
+						
+							<!-- 공백 -->
+							<div  style="width:15%">&nbsp;</div>
+							
+							<!-- 페이징  일반 게시글-->
+							<div th:if = "${searchKey == null}">
+								<ul class="pagination pagination-md border-0 ">
+								  <!--  처음 페이지 -->
+								  <li class="page-item"><a class="page-link" th:href="@{/admin/memberlist.do/1}">
+								  	<i class="bi bi-chevron-double-left"></i></a>
+								  </li>
+								  
+								  <!-- 이전 페이지  -->
+								  <li class="page-item"><a class="page-link" th:href="@{'/admin/memberlist.do/'+${pageVO.prevPage}}">
+								  	<i class="bi bi-chevron-left"></i></a>
+								  </li>
+								  
+								  <!-- 현재 페이지 -->
+								  <li class="page-item active"><a class="page-link" th:href="@{'/admin/memberlist.do/'+${pageVO.page}}">
+								  	[[${pageVO.page}]]</a>
+								  </li>
+								  
+								  <!-- 다음 페이지 -->
+								  <li class="page-item"><a class="page-link" th:href="@{'/admin/memberlist.do/'+${pageVO.nextPage}}">
+								  	<i class="bi bi-chevron-right"></i></a>
+								  </li>
+								  
+								  <!-- 마지막 페이지 -->
+								  <li class="page-item"><a class="page-link" th:href="@{'/admin/memberlist.do/'+${pageVO.endPage}}">
+								 	 <i class="bi bi-chevron-double-right"></i></a>
+								 </li>
+								</ul>
+								
+							</div>
+							<!-- // 페이징  일반 게시글-->
+							
+							<!-- 페이징  검색 게시글-->
+							<div th:if = "${searchKey != null}">
+								<ul class="pagination pagination-md border-0 ">
+									
+								<!-- 처음 페이지 -->
+								  <li class="page-item">
+								  	<a class="page-link" 
+								  	   th:href="@{'/admin/memberSearch.do?page=1&limit=5&searchKey='+${searchKey}+'&searchWord='+${searchWord}}">
+								  	<i class="bi bi-chevron-double-left"></i></a>
+								  </li>
+			
+								<!-- 이전 페이지  -->
+								  <li class="page-item">
+								  	<a class="page-link" th:href="@{'/admin/memberSearch.do?page='+${pageVO.prevPage}+'&limit=5&searchKey='+${searchKey}+'&searchWord='+${searchWord}}">
+								  	<i class="bi bi-chevron-left"></i></a>
+								  </li>
+								  
+								 <!-- 현재 페이지  -->
+								  <li class="page-item active">
+								  	<a class="page-link" th:href="@{'/admin/memberSearch.do?page='+${pageVO.page}+'&limit=5&searchKey='+${searchKey}+'&searchWord='+${searchWord}}">
+								  	[[${pageVO.page}]]</a>
+								  </li>
+								  
+								  <!-- 다음 페이지  -->
+								  <li class="page-item">
+								  		<a class="page-link" th:href="@{'/admin/memberSearch.do?page='+${pageVO.nextPage}+'&limit=5&searchKey='+${searchKey}+'&searchWord='+${searchWord}}">
+								  	<i class="bi bi-chevron-right"></i></a>
+								  </li>
+								  
+								  <!--  마지막 페이지  -->
+								  <li class="page-item">
+								  		<a class="page-link" th:href="@{'/admin/memberSearch.do?page='+${pageVO.endPage}+'&limit=5&searchKey='+${searchKey}+'&searchWord='+${searchWord}}">
+								 	 <i class="bi bi-chevron-double-right"></i></a>
+								 </li>
+								</ul>
+							</div>
+							<!-- // 페이징  검색 게시글-->
+							
+							<div>
+								<a class="btn btn-primary mx-2 px-2" th:href="@{/admin/memberlist.do/1}">회원 목록</a>
+							</div>	
+							
+						</div>	
+					</td>
+						
+
+				</tr>
+				
+			</table>
+		    
+		    <!-- 검색 부분  -->
+			<form id="searchForm" method="get" th:action="@{/admin/memberSearch.do}">
+		
+			<div class="w-100  d-flex justify-content-start align-items-center mt-0 mb-3">
+			
+				<div class="mx-2 px-1">
+					<select id="searchKey" name="searchKey" class="form-select" title="검색 기준">
+						<option value="id">아이디</option>
+					  	<option value="name">성명</option>
+					  	<option value="phone">휴대폰</option>
+					  	<option value="email">이메일</option>
+					  	<option value="address">기본주소</option>
+					  	<option value="detailaddr">상세주소</option>
+					</select>
+				</div>
+				
+				<div class="mx-2 px-1">
+					<input type="text" class="form-control" required name="searchWord" title="검색어">
+				</div>
+				
+				<button  type="submit" class="btn btn-primary ms-2 me-4 px-2">검색</button>
+			
+				<div style="width:650px">&nbsp;</div>
+			
+			</div>
+			
+		</form>			
+	     <!--// 검색 부분  -->
+	     	
+	</div>
+	<!--// 1  -->
+	
+</div>
+<!--// 회원정보 테이블  -->
+
+
+
+</body>
+</html>

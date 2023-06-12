@@ -1,0 +1,3 @@
+--원글의 전체 댓글 조회
+SELECT * FROM BOARD 
+WHERE BOARD_RE_REF = 232 AND BOARD_RE_LEV > 0; 

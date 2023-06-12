@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{layout/layoutboard}">
+<head>
+<meta charset="UTF-8">
+<meta name="_csrf" th:content="${_csrf.token}"/>
+<meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+<title>Insert title here</title>
+<link th:href="@{/summernote/0.8.18/dist/summernote-lite.min.css}" rel="stylesheet">
+
+<!--  게시글 보기 -->
+<style>
+	/* 댓글 수정삭제 popover */
+	#replyPopover {
+		width: 60px; 
+		height: 70px;
+		border: 1px solid #ccc;
+		line-height: 25px;
+		padding : 10px;
+		z-index:30;
+		background: #eff; 
+	}
+	
+	#replyPopover a {
+		text-decoration: none;
+		color: #333; 
+	 }
+	 
+	  /* 툴팁  */
+  .custom-tooltip {
+ 	 --bs-tooltip-bg: var(--bs-primary);
+	}
+
+</style>
+
+
+
+<script th:src="@{/summernote/0.8.18/dist/summernote-lite.min.js}"></script>
+
+<script>
+	$(function(){
+		/* popover 은닉 =초기상태 */	
+		$("#replyPopover").hide();
+		
+		var replys = "[[${boardList}]]";
+		replys	= replys.replaceAll('&quot;', '"');
+		console.log(replys);
+		var replyJSON = JSON.parse(replys);
+		console.log(replyJSON.length);
+		console.log(replyJSON[0].boardNum);
+		
+		var replysHtml ="";
+		
+		for(var i=0 ; i<replyJSON.length;i++){
+			/* 이전 댓글내용은 title 취소시 복원용 */
+			var temp = '<div class="card-body d-flex justify-content-around">'+
+							'<div style="width: 70%;">'+
+								'<input class="form-control input-sm bg-white" id="boardReplyFidContent'+replyJSON[i].boardNum+'" type="text" readonly value="'+replyJSON[i].boardContent+'" title="'+replyJSON[i].boardContent+'">'+
+							'</div>'+
+							'<div style="width: 20%" class="mx-2">'+
+								'<input class="form-control input-sm bg-white" id="boardReplyWriter'+replyJSON[i].boardNum+'" type="text" readonly value="'+replyJSON[i].boardId+'">'+
+							'</div>'+    
+							'<div style="width: 5%" class="mx-2">'+
+								'<i id="boardReply_select_btn'+i+'" title="'+replyJSON[i].boardNum+'" class="bi bi-three-dots-vertical"></i>'+ 
+							'</div>'+
+							'<div style="width: 10%">'+
+								'<i id="boardReply_submit_btn'+replyJSON[i].boardNum+'" title="댓글 수정 전송" class="bi bi-pencil-square mx-3"></i>'+
+								'<i id="boardReply_cancel_btn'+replyJSON[i].boardNum+'" title="취소" class="bi bi-arrow-clockwise"></i>'+
+							'</div>'+
+						'</div>';
+			replysHtml += temp;
+		} //for
+		
+		$("#replys").html(replysHtml);
+		
+		 //댓글 등록
+		$("#boardReplyFidBtn").click(function(e){
+			
+			alert("댓글 등록")
+			
+			var boardNum = $("#boardNum").text();
+			
+			var boardReRef = "[[${boardVO.boardNum}]]";//boardReRef 댓글 원게시글 아이디
+			console.log("boardReRef:"+boardReRef);
+			
+			console.log("댓글등록:", boardNum);
+			console.log("댓글 작성자 : ", $("#boardReplyWriter").val());
+			console.log("댓글 내용 : ", $("#boardReplyFidContent").val());
+			
+			$.ajax({
+				
+				url : '/tomato/board/boardReplyWriterProc.do?_csrf=[[${_csrf.token}]]',
+				type : 'post',
+				dataType : 'text',
+				
+				data : {
+				    boardNum : boardNum,
+					boardId :  $("#boardReplyWriter").val(),
+					boardContent : $("#boardReplyFidContent").val()
+				},  
+				
+				success : function(data){
+					 console.log(" 댓글들:"+ data);
+					 
+					//  변경된 댓글 현황 적용
+						var replyJSON = JSON.parse(data);
+						console.log(replyJSON.length);
+						console.log(replyJSON[0].boardNum);
+						
+						var replysHtml ="";
+						
+						for(var i=0 ; i<replyJSON.length;i++){
+							// 이전 댓글내용은 title 취소시 복원용 
+							var temp = '<div class="card-body d-flex justify-content-around">'+
+											'<div style="width: 70%;">'+
+												'<input class="form-control input-sm bg-white" id="boardReplyFidContent'+replyJSON[i].boardNum+'" type="text" readonly value="'+replyJSON[i].boardContent+'" title="'+replyJSON[i].boardContent+'">'+
+											'</div>'+
+											'<div style="width: 20%" class="mx-2">'+
+												'<input class="form-control input-sm bg-white" id="boardReplyWriter'+replyJSON[i].boardNum+'" type="text" readonly value="'+replyJSON[i].boardId+'">'+
+											'</div>'+    
+											'<div style="width: 5%" class="mx-2">'+
+												'<i id="boardReply_select_btn'+i+'" title="'+replyJSON[i].boardNum+'" class="bi bi-three-dots-vertical"></i>'+ 
+											'</div>'+
+											'<div style="width: 10%">'+
+												'<i id="boardReply_submit_btn'+replyJSON[i].boardNum+'" title="댓글 수정 전송" class="bi bi-pencil-square mx-3"></i>'+
+												'<i id="boardReply_cancel_btn'+replyJSON[i].boardNum+'" title="취소" class="bi bi-arrow-clockwise"></i>'+
+											'</div>'+
+										'</div>';
+							replysHtml += temp;
+						} //for
+						
+						$("#replys").html(replysHtml);		
+				
+				
+				}//success
+				
+			});//ajax
+			
+		});//function
+		
+		// 댓글 수정 삭제 이벤트 처리
+		// $("table").on('click', 'button[id^=btn_]' , function(e) {  
+		$("#replys").on('click',"[id^=boardReply_select_btn]",function(e){
+			var id = e.currentTarget.id;
+			//alert("수정/삭제"+ id);
+			//수정 삭제 팝업
+			$("#replyPopover").show();
+			
+			/* 좌표 획득 및 할당  */
+			var popofx = $(this).offset().left + 15;
+			var popofy = $(this).offset().top;
+			//alert(popofx+":"+popofy);
+			
+			$("#replyPopover").offset({top:popofy, left:popofx});
+			
+			// 수정 삭제 대상 댓글 아이디(boardNum) 전송
+			console.log($(this).attr("title"));
+		 	var replyboardNum = $(this).attr("title");
+		 	
+		 	//수정 버튼 id 삭제 버튼 id => boardNum를 전송
+		 	$("#replyPopover a").eq(0).attr("id","updateReply"+replyboardNum);
+		 	$("#replyPopover a").eq(1).attr("id","deleteReply"+replyboardNum);
+			//$("#replyPopover a").attr("id","updateReply"+replyboardNum);
+			//console.log($("#replyPopover").attr("id"));
+		});
+		
+		/* 댓글 수정 삭제 popover 제어  은닉*/
+		$("#replyPopover").mouseout(function(){
+			$("#replyPopover").hide();
+		});
+		
+		/* 댓글 수정 삭제 popover 제어  보이기*/
+		$("#replyPopover").mouseover(function(){
+			$("#replyPopover").show();
+		});
+		
+		/* 댓글 수정 메뉴 활성화 */
+		$("#replyPopover").on("click","[id^=updateReply]",function(e){
+		
+			/* 댓글 수정 활성화 */
+			var boardNum = e.currentTarget.id;
+			boardNum = boardNum.substring("updateReply".length)
+			console.log("boardNum:"+boardNum);
+			
+			var boardContent =$("#boardReplyFidContent"+boardNum).val();
+			console.log("boardContent:"+boardContent);
+			
+			var boardId =$("#boardReplyWriter"+boardNum).val();
+			console.log("boardId:"+boardId);
+			
+			$("#boardReplyFidContent"+boardNum).removeAttr("readonly");
+			$("#boardReplyFidContent"+boardNum).focus();
+			
+		});
+		
+		/*댓글 수정 취소*/
+		$("#replys").on("click","[id^=boardReply_cancel_btn]",function(e){
+				
+			var boardNum = e.currentTarget.id;
+			boardNum = boardNum.substring("boardReply_submit_btn".length)
+			console.log("boardNum:"+boardNum);
+			
+			var boardContent =$("#boardReplyFidContent"+boardNum).val();
+			console.log("boardContent:"+boardContent);
+			
+			/*이전 내용복원*/
+			$("#boardReplyFidContent"+boardNum).val($("#boardReplyFidContent"+boardNum).attr("title"));
+			
+			/* 읽기 전용 활성화 */
+			$("#boardReplyFidContent"+boardNum).attr("readonly","readonly")
+		});
+		
+		/* 댓글 수정 처리(전송)  */
+		$("#replys").on("click","[id^=boardReply_submit_btn]",function(e){
+			
+			alert("수정 처리");
+			var boardNum = e.currentTarget.id;
+			boardNum = boardNum.substring("boardReply_submit_btn".length)
+			console.log("boardNum:"+boardNum);
+			
+			var boardContent =$("#boardReplyFidContent"+boardNum).val();
+			console.log("boardContent:"+boardContent);
+			
+			var boardId =$("#boardReplyWriter"+boardNum).val();
+			console.log("boardId:"+boardId);
+			
+			var boardReRef = "[[${boardVO.boardNum}]]";//boardReRef 댓글 원게시글 아이디
+			console.log("boardReRef:"+boardReRef);
+			
+			
+			/* 댓글 수정 내용 전송 */
+			$.ajax({
+				
+				url : '/tomato/board/boardReplyUpdate.do?_csrf=[[${_csrf.token}]]',
+				type : 'post',
+				dataType : 'text',
+				
+				data : {
+				    boardNum : boardNum,
+					boardId :  boardId,
+					boardContent : boardContent,
+					boardReRef : boardReRef
+				},  
+				
+				success : function(data){
+					 console.log(" 댓글들:"+ data);
+					 
+					 //  변경된 댓글 현황 적용
+					var replyJSON = JSON.parse(data);
+					console.log(replyJSON.length);
+					console.log(replyJSON.msg); // 메세지
+					console.log(replyJSON.boardList[0].boardNum); // 댓글 리스트 
+					
+					var replysHtml ="";
+					alert(replyJSON.msg);
+					
+					for(var i=0 ; i<replyJSON.boardList.length;i++){
+						// 이전 댓글내용은 title 취소시 복원용 
+						var temp = '<div class="card-body d-flex justify-content-around">'+
+										'<div style="width: 70%;">'+
+											'<input class="form-control input-sm bg-white" id="boardReplyFidContent'+replyJSON.boardList[i].boardNum+'" type="text" readonly value="'+replyJSON.boardList[i].boardContent+'" title="'+replyJSON.boardList[i].boardContent+'">'+
+										'</div>'+
+										'<div style="width: 20%" class="mx-2">'+
+											'<input class="form-control input-sm bg-white" id="boardReplyWriter'+replyJSON.boardList[i].boardNum+'" type="text" readonly value="'+replyJSON.boardList[i].boardId+'">'+
+										'</div>'+    
+										'<div style="width: 5%" class="mx-2">'+
+											'<i id="boardReply_select_btn'+i+'" title="'+replyJSON.boardList[i].boardNum+'" class="bi bi-three-dots-vertical"></i>'+ 
+										'</div>'+
+										'<div style="width: 10%">'+
+											'<i id="boardReply_submit_btn'+replyJSON.boardList[i].boardNum+'" title="댓글 수정 전송" class="bi bi-pencil-square mx-3"></i>'+
+											'<i id="boardReply_cancel_btn'+replyJSON.boardList[i].boardNum+'" title="취소" class="bi bi-arrow-clockwise"></i>'+
+										'</div>'+
+									'</div>';
+						replysHtml += temp;
+					} //for
+					
+					$("#replys").html(replysHtml);		
+				
+				}//success
+				
+			}); //ajax
+			
+		});
+		
+		/* 댓글 삭제 */
+		$("#replyPopover").on("click","[id^=deleteReply]",function(e){
+			
+			/* 댓글 수정 활성화 */
+			var boardNum = e.currentTarget.id;
+			boardNum = boardNum.substring("deleteReply".length)
+			console.log("boardNum:"+boardNum);
+			
+			var boardReRef = "[[${boardVO.boardNum}]]";//boardReRef 댓글 원게시글 아이디
+			console.log("boardReRef:"+boardReRef);
+			
+			if(confirm("댓글 삭제 하시겠습니까?") == true){
+				
+				$.ajax({
+					
+					url : '/tomato/board/boardReplyDelete.do?_csrf=[[${_csrf.token}]]',
+					type : 'get',
+					dataType : 'text',
+					
+					data : {
+					    boardNum : boardNum,
+					    boardReRef : boardReRef
+					},  
+					
+					success : function(data){
+						 console.log(" 댓글들:"+ data);
+						 
+						 var replyJSON = JSON.parse(data);
+						console.log(replyJSON.length);
+						console.log(replyJSON.msg); // 메세지
+						console.log(replyJSON.boardList[0].boardNum); // 댓글 리스트 
+						
+						alert(replyJSON.msg);
+						
+						var replysHtml ="";
+						
+						for(var i=0 ; i<replyJSON.boardList.length;i++){
+							// 이전 댓글내용은 title 취소시 복원용 
+							var temp = '<div class="card-body d-flex justify-content-around">'+
+											'<div style="width: 70%;">'+
+												'<input class="form-control input-sm bg-white" id="boardReplyFidContent'+replyJSON.boardList[i].boardNum+'" type="text" readonly value="'+replyJSON.boardList[i].boardContent+'" title="'+replyJSON.boardList[i].boardContent+'">'+
+											'</div>'+
+											'<div style="width: 20%" class="mx-2">'+
+												'<input class="form-control input-sm bg-white" id="boardReplyWriter'+replyJSON.boardList[i].boardNum+'" type="text" readonly value="'+replyJSON.boardList[i].boardId+'">'+
+											'</div>'+    
+											'<div style="width: 5%" class="mx-2">'+
+												'<i id="boardReply_select_btn'+i+'" title="'+replyJSON.boardList[i].boardNum+'" class="bi bi-three-dots-vertical"></i>'+ 
+											'</div>'+
+											'<div style="width: 10%">'+
+												'<i id="boardReply_submit_btn'+replyJSON.boardList[i].boardNum+'" title="댓글 수정 전송" class="bi bi-pencil-square mx-3"></i>'+
+												'<i id="boardReply_cancel_btn'+replyJSON.boardList[i].boardNum+'" title="취소" class="bi bi-arrow-clockwise"></i>'+
+											'</div>'+
+										'</div>';
+							replysHtml += temp;
+						} //for
+						
+						$("#replys").html(replysHtml);			
+				
+					}//success
+					
+				}); //ajax
+			}
+				
+			
+		});
+		
+	});
+</script>
+</head>
+
+<body>
+
+
+
+<div layout:fragment="content" id="viewBoard" 
+ 	 class="mx-auto d-flex justify-content-center align-items-center">
+ 	 
+			<!-- 댓글 수정 삭제 popover-->
+			 <div id ="replyPopover" > 
+				<a href="#" id ="updateReply">수정</a><br>
+				<a href="#" id ="deleteReply">삭제</a>
+			</div> 
+			<!--// 댓글 수정 삭제 popover-->
+			
+			<!-- 게시글 보기 -->
+			<div  class="mx-auto d-flex justify-content-center align-items-center" 
+				  style="overflow-y:auto;width:100%; height:calc(100vh - 200px);">
+			
+				<div class="w-75">
+					<div class="w-75 mx-auto">
+						<h4 class="modal-title my-4">게시글 보기</h4>
+					</div>
+				
+					<div class="border border-1  pb-3 mb-3 w-75 mx-auto">
+				
+						<!-- 게시글 내용 찾기  -->
+						<table class="table">
+						
+							<tr class="form-group">
+								<td class="col-xs-2">
+									<label for="boardNum" class="control-label"> 
+										<span style="color: red">*</span>글번호
+									</label>
+								</td>
+								<td class="col-xs-10">
+									<span id="boardNum" th:text="${boardVO.boardNum}"></span>
+								</td>
+							</tr>
+								
+							<tr class="form-group">
+								<td class="col-xs-2">
+									<label for="boardName" class="control-label"> 
+										<span style="color: red">*</span>글쓴이
+									</label>
+								</td>
+								
+							 <td class="col-xs-10">
+							 <span th:text="${boardVO.boardId}"></span>
+							</tr>
+							<tr>
+								<td><label for="boardSubject" class="control-label">
+										<span style="color: red">*</span>제 목
+								</label>
+										
+								</td>
+								<td>
+								<span th:text="${boardVO.boardTitle}"></span>
+								</td>
+							</tr>
+							<tr>
+								<td><label for="boardContent" class="control-label">
+										<span style="color: red">*</span>내 용
+								</label></td>
+								
+								<td>
+								<div id="boardContent" th:utext="${boardVO.boardContent}"></div>
+								</td>
+							</tr>
+			
+							<tr>
+								<td><label for="boardFile" class="control-label"> 파일
+										첨부 </label></td>
+								<td>
+								<a th:href="@{'/upload/'+${boardVO.boardNum}+'/'+${boardVO.boardFile}}">[[${boardVO.boardOriginalFile}]] </a>
+						   		</td>
+							</tr>
+							
+							<tr>
+								<td><label for="boardReadCount" class="control-label">조회수</label></td>
+								<td>
+									<span th:text="${boardVO.boardReadCount}" class="pl-2" ></span>
+								</td>
+							</tr>
+							
+							<tr>
+								<td><label for="boardDate" class="control-label">작성일</label></td>
+								<td><span th:text="${#dates.format(boardVO.boardDate,'yyyy-MM-dd HH:mm:ss')}"class="mx-auto"></span> </td>
+							</tr>
+					
+						</table>
+						
+								
+						<!-- 기존 댓글 들  -->
+						<div id ="replys">
+						
+						</div>
+								
+						<div id ="replyInsert">
+							
+						 	 <form class="form-group"> 
+								<div class="card-body d-flex justify-content-around">
+									<div style="width: 70%;">
+										 <input class="form-control input-sm" id="boardReplyFidContent" type="text" placeholder="댓글 입력...">
+									</div>
+									
+									<div style="width: 20%" class="mx-2">
+        								<input class="form-control input-sm bg-white" id="boardReplyWriter" type="text"  placeholder="작성자"  readonly th:value="${session.SPRING_SECURITY_CONTEXT.Authentication.Principal.username}">
+      								</div>      	
+      															
+      								<div style="width: 15%" class="mx-2">
+        								<button type="button" id="boardReplyFidBtn" class="btn btn-primary btn-sm btn-block replyAddBtn">
+        								<i  id="boardReply_submit_btn" class="bi bi-save"></i> 저장</button>
+    								</div>
+   								</div>
+							 </form> 	
+							 
+						</div>	 	<!-- // 댓글   -->
+					
+					
+						<!--  메뉴 -->
+						<div class="w-100 mt-3 me-5 mx-auto flex d-flex justify-content-center">
+							<a class="btn btn-primary mx-2" th:href="@{'/board/boardlist.do/'+${page}}">게시글 목록</a>
+							<a class="btn btn-primary mx-2" th:href="@{'/board/boardUpdate.do?boardNum='+${boardVO.boardNum}}">게시글 수정</a>
+						</div>
+					
+					</div> 
+			
+					<!-- 툴팁 -->
+					<script>
+						// Initialize tooltips
+						var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+						var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+						  return new bootstrap.Tooltip(tooltipTriggerEl)
+						})
+					</script>
+	
+				</div>
+		
+			</div>
+			<!--// 게시글 보기 -->
+
+</div>
+
+</body>
+</html>

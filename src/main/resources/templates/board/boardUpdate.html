@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{layout/layoutboard}">
+<head>
+<meta charset="UTF-8">
+<meta name="_csrf" th:content="${_csrf.token}"/>
+<meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+<title>Insert title here</title>
+<link th:href="@{/summernote/0.8.18/dist/summernote-lite.min.css}" rel="stylesheet">
+<script th:src="@{/summernote/0.8.18/dist/summernote-lite.min.js}"></script>
+
+<!-- 게시글 수정  -->
+
+<!--  제출 전 플래그 정검  -->
+<script>
+		
+		$(function(){
+			
+			var boardContentCheck = false;
+			var originalFileCheck =	true; /* 업로드 파일 check */
+		 	const maxOriginalFile= 30 * 1024* 1024 ; //업로드 파일용량 제한 30MB
+			
+			/* $('#boardForm').submit(function(){
+										
+				alert(originalFileCheck);
+				
+				if(originalFileCheck == false){
+					// 파일 업로드  check fail
+					
+					alert("originalFileCheck:");
+									
+					return false; // 전송 취소 
+				}
+				
+			}); */
+			
+			
+			$("#boardOriginalFile").blur(function(){
+				
+				console.log("파일업로드체크:"+originalFileCheck);
+				
+				//File; https://developer.mozilla.org/ko/docs/Web/API/File
+				//File; https://developer.mozilla.org/ko/docs/Web/API/FileReader
+				//File; https://developer.mozilla.org/ko/docs/Web/API/File_API/Using_files_from_web_applications
+				var boardOriginalFile =document.getElementById('boardOriginalFile');
+					console.log("boardOriginalFile.value:"+boardOriginalFile.value+":")
+					
+				if(boardOriginalFile.value != ''){
+					  
+					var originalFile = document.getElementById('boardOriginalFile').files[0];
+					
+					console.log("size:"+originalFile.size);
+					
+					if(originalFile.size > maxOriginalFile){
+						console.log("파일용량 초과:");
+						originalFileCheck = false;
+						alert("첨부파일 용량은 30MB 이내로 등록이 가능합니다.");
+						$("#boardOriginalFile").val("");
+						//return false;
+					}
+					else{
+						console.log("적절한 사이즈:")
+						originalFileCheck = true;
+					}
+					
+					console.log("파일업로드체크2:"+originalFileCheck);
+					
+				}//if
+				
+				else{
+					console.log("파일 업로드 없음:")
+					originalFileCheck = true;
+				}//else
+				
+			}); 
+			
+		$('#boardForm').submit(function(){
+				
+				console.log("boardContentCheck:" + boardContentCheck);
+				console.log("originalFileCheck:"+ originalFileCheck);
+				
+				var textContent  =$('.note-editable').html();
+				
+				//글자 수 제한
+				if(textContent.length > 10000 || textContent == '<p><br></p>' ){
+					
+					alert("1~10000자이내로 적어주세요");
+					$('.note-editable').focus();
+					boardContentCheck = false;
+				}
+				else{
+					boardContentCheck = true ;
+				}
+				console.log("boardContentCheck:"+ boardContentCheck)
+				
+				if(boardContentCheck == false || originalFileCheck  == false){
+					
+					var textContent  =$('.note-editable').html();
+					console.log("크기:"+textContent.length);
+					return false;
+				};
+				
+			});
+		
+		});
+</script>
+
+</head>
+
+<body>
+
+<div layout:fragment="content" id="updateBoard" 
+ 	 class="mx-auto d-flex justify-content-center align-items-center pb-5">
+			
+	<div class="w-100" style="overflow-y:auto;width:100%; height:calc(100vh - 200px);" >
+			
+	
+	<!-- form -->
+	<form id="boardForm"
+		  name="boardForm"
+		  method="post" 
+		  th:object="${boardDTO}"
+		  th:action="@{/board/boardUpdateProc.do}"
+		  enctype="multipart/form-data"
+		  class="w-50 mx-auto"> 
+	
+			<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>  
+			<input type="hidden" th:name="boardReRef"  th:field="*{boardReRef}" />
+			<input type="hidden" th:name="boardReLev"  th:field="*{boardReLev}" />
+			<input type="hidden" th:name="boardReSeq"  th:field="*{boardReSeq}" />
+<!-- 			<input type="text" th:name="boardDate"  th:field="*{boardDate}" /> -->
+			
+				<div>
+					<h4 class="my-4">게시글 수정</h4>
+				</div>
+				
+				<div class="border border-1 border-bottom-0  mx-auto">
+			
+			
+					<table class="table">
+						
+						<tr class="form-group">
+							<td class="col-xs-2">
+								<label for="boardNum" class="control-label"> 
+									<span style="color: red">*</span>글번호
+								</label>
+							</td>
+							<td class="col-xs-10">
+								<input type="text" 
+								       id="boardNum"
+									   name="boardNum" 
+									   class="form-control bg-white" 
+									   th:field="*{boardNum}"
+									   readOnly
+									   />
+							</td>
+						</tr>
+							
+						<tr class="form-group">
+							<td class="col-xs-2">
+								<label for="boardId" class="control-label"> 
+									<span style="color: red">*</span>글쓴이
+								</label>
+							</td>
+							<td class="col-xs-10">
+								<input type="text" 
+							       id="boardId"
+								   name="boardId" 
+								   class="form-control bg-white" 
+								   th:field="*{boardId}"
+								   readOnly/>
+							</td>
+						</tr>
+							
+						<tr>
+							<td><label for="boardSubject" class="control-label">
+									<span style="color: red">*</span>제 목
+							</label>
+									
+							</td>
+							<td>
+							<input id="boardTitle"
+								   name="boardTitle" 
+								   class="form-control bg-white" 
+								   th:field="*{boardTitle}"
+								   title="게시글 제목은 2~50사이입니다"
+								   required 
+								   pattern="[가-힣\w\W]{2,50}"
+									/>
+							</td>
+						</tr>
+							
+						<tr><!-- 내용 -->
+							<td><label for="boardContent" class="control-label">
+								<span style="color: red">*</span>내 용
+								</label>
+							</td>
+								<td>
+								<textarea data-ck-editor
+										  class="form-control"
+										  id="boardContent" 
+										  name="boardContent"
+										  th:field="*{boardContent}"
+										  cols="40" 
+										  rows="5" 
+										  title="글내용은 2~1000자이내로 적습니다" 
+										  required
+										  autocomplete="off"
+										  style="overflow:auto"></textarea>
+	   
+						    <script>
+						    
+						    /* summernote 사용 */
+						    $(function(){
+							      $('#boardContent').summernote({
+							        placeholder: '여기에 글작성하시면 됩니다',
+							        tabsize: 2,
+							        height: 200,
+							        width: 750,
+							        toolbar: [
+							          ['style', ['style']],
+							          ['font', ['bold', 'underline', 'clear']],
+							          ['color', ['color']],
+							          ['para', ['ul', 'ol', 'paragraph']],
+							          ['table', ['table']],
+							          ['insert', ['link', 'picture', 'video']],
+							          ['view', ['fullscreen', 'codeview', 'help']]
+							        ],
+							        
+						        /* contents 미디어 업로드  */
+									callbacks: {
+										onImageUpload: function(files, editor, welEditable) {
+								    		for (var i = files.length - 1; i >= 0; i--) {
+								               sendFile(files[i], this);
+								        	}
+							       		}
+								    }//
+						        
+							      });//
+							      
+						    });//jquery
+						    
+						    function sendFile(file, el) {
+						    	/*csrf token  */
+						    	var token = $("meta[name='_csrf']").attr("content");
+						        var header = $("meta[name='_csrf_header']").attr("content");
+						        var form_data = new FormData();
+						        form_data.append('file', file);
+						        
+						        $.ajax({
+						          data: form_data,
+						          type: "POST",
+						          url: '/tomato/board/image.do',
+						          beforeSend : function(xhr){ 
+						        	/*데이터를 전송하기 전에 헤더에 csrf값을 설정한다*/
+						            xhr.setRequestHeader(header, token);
+						          },
+						          cache: false,
+						          contentType: false,
+						          enctype: 'multipart/form-data',
+						          processData: false,
+						          success: function(url) {
+						        	 console.log("url:"+url);
+						            $(el).summernote('editor.insertImage', url);
+						          }
+						        });
+						      }
+						    
+						    </script>
+							
+							<!--//content  -->
+							</td>
+						</tr>
+						
+						<!--첨부 파일   -->
+						<tr>
+							<td><label for="boardFile" class="control-label"> 파일
+									첨부 </label></td>
+							<td>
+								<a th:href="@{'/upload/'+${boardDTO.boardNum}+'/'+${boardFileName}}">[[${boardOriginalFileName}]] </a>
+					   		</td>
+						</tr>
+							
+						<tr>
+							<td><label for="boardOriginalFile" class="control-label"> &nbsp; </label></td>
+							<td>
+								<input type="file" 
+									   id="boardOriginalFile" 
+									   name="boardOriginalFile"
+									   th:field="*{boardOriginalFile}"
+									   class="form-control" 
+									   title="첨부 파일을 입력하십시오"
+									   autocomplete="off" />
+					   		</td>
+						</tr>
+					
+						<!-- // 첨부 파일   -->
+						
+						<!-- 게시글 조회수 증가 -->
+						<tr>
+							<td><label for="boardReadCount" class="control-label">조회수</label></td>
+							<td>
+								<input 
+								   id="boardReadCount"
+								   name="boardReadCount" 
+								   class="form-control bg-white pl-2" 
+								   th:field="*{boardReadCount}"
+								   readOnly									
+								 	 />
+							</td>
+						</tr>
+						
+						<!--// 게시글 조회수 증가 -->
+							
+						<!-- 게시글 작성일  -->
+							<tr>
+								<td><label for="boardDate" class="control-label">작성일</label></td>
+								<td><span th:text="${#dates.format(boardDate,'yyyy-MM-dd HH:mm:ss')}"class="mx-auto"></span> </td>
+							</tr>
+						</table>
+						
+						<!-- // 게시글 작성일  -->
+						
+					</div>
+					
+					<!--  메뉴 -->
+					<div class="w-75 mx-auto flex d-flex justify-content-end">
+						<a class="btn btn-primary mx-2" th:href="@{'/board/boardlist.do/'+${page}}">게시글 목록</a>
+						<button id="updateBtn" class="btn btn-primary mx-2" type="submit">게시글 수정</button>
+					</div>
+					
+					<!-- // 메뉴 -->
+
+					
+					
+			</form>
+				
+			
+		 
+		</div>
+		
+	</div>
+
+</body>
+</html>

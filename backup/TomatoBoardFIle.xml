@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tomato.mapper.boardfile">
+	
+	<!--  첨부파일 삽입 -->	
+	<select id="insertBoardFile" parameterType="com.tomato.board.boardvo.FileVO">
+		INSERT INTO BOARDFILE VALUES (
+			BOARDFILE_SEQ.NEXTVAL,
+			#{boardID},
+			<if test='fileName == null'>
+			<![CDATA[' ',]]>
+			</if>
+			<if test='fileName != null'>
+			#{fileName},
+			</if>
+			<if test='encodeFileName == null'>
+			<![CDATA[' ',]]>
+			</if>
+			<if test='encodeFileName != null'>
+			#{encodeFileName},
+			</if>
+		)
+	</select>
+	
+	<!-- 첨부파일 업데이트 -->
+	<update id="updateBoardFile" parameterType="com.tomato.board.boardvo.FileVO">
+		UPDATE BOARDFILE SET 
+			FILENAME = 
+			<if test='fileName == null'>
+			<![CDATA[' ',]]>
+			</if>
+			<if test='fileName != null'>
+			#{fileName},
+			</if>
+			ENCODEFILENAME=
+			<if test='encodeFileName == null'>
+			<![CDATA[' ']]>
+			</if>
+			<if test='encodeFileName != null'>
+			#{encodeFileName}
+			</if>
+		WHERE BOARDFILEID=#{boardID}
+	</update>
+	
+	<!-- 첨부파일 삭제 -->
+	<delete id="deleteBoardFile" parameterType="String">
+		DELETE FROM BOARDFILE WHERE BOARDFILEID=#{boardID}
+	</delete>
+	
+
+
+</mapper>

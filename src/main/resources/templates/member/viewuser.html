@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+ 	  xmlns:sec="http://www.thymeleaf.org/extras/spring-security5"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{layout/layout}">
+<head>
+<meta charset="UTF-8">
+<title>회원 보기</title>
+
+
+
+<!-- 경고문구 파란색 -->
+<style>
+ul{
+	color:blue;
+	list-style: none;
+	margin-top:7px;
+	margin-bottom:0;
+	padding-left:0;
+	margin-left:0;
+}
+
+ul li{
+	margin-left:0;
+}
+
+#joinFrag {
+	height:calc(100vh - 200px);
+	display: flex;
+	align-items:center;
+	justify-content: center;
+	overflow-y : auto;
+}
+
+</style>
+
+
+
+</head>
+
+<body>
+
+<!-- 회원 정보 보기  -->
+
+<div id="viewFrag" layout:fragment="content" class="mx-auto d-flex justify-content-center align-items-center">
+
+	<!-- wrap  -->
+	<div id="updateWrap" style="width:100%">
+
+		<div class="d-flex justify-content-center mt-3 mb-3">
+			<h3>회원정보 보기</h3>
+		</div>
+		
+		<form id="viewUser_form" th:object="${memberVO}" action="/tomato/member/updateMemberProc.do" method="post">
+					
+									   
+			<table class="table table-bordered w-50 mx-auto">
+				<tr>
+					<th>아이디</th>
+					<td>
+						<input type="text" th:field="*{id}" class="form-control w-50 bg-white" readOnly>
+					</td>
+					
+				</tr>
+				
+				<!-- 이름 -->
+				<tr>
+					<th>이름 </th>
+					<td> 
+						<input type="text" th:field="*{name}" class="form-control w-50 bg-white" readOnly>	
+					</td>
+				</tr>
+				<!-- 휴대폰 -->
+				<tr>
+					<th>휴대폰 </th>
+					<td>
+						<input type="text"  th:field = "*{phone}" id="phone" name="phone" class="form-control bg-white" readOnly >	
+					</td>
+				</tr>
+				<!-- 이메일 -->
+				<tr>
+					<th>이메일 </th>
+					<td> 
+						<div class="row">
+							<div class="col-sm-5">		
+								<input type="text" th:field = "*{email}" id="email" name="email" class="form-control bg-white" readOnly>	
+							</div>
+						</div>	
+						
+				</tr>
+					<!--생일 -->
+				<tr>
+					<th>생일</th>
+					<td> 
+						<input type="text" id="birthday" name="birthday"
+						 	th:field="*{birthday}" readOnly class="form-control w-50 bg-white" >	
+					</td>
+				</tr>
+				
+				<!--우편번호 -->
+				<tr>
+					<th>우편번호</th>
+					<td>
+						<input type="text" id="postadd" name="postadd" th:field="*{postadd}" class="form-control w-70 bg-white" readonly>	
+					</td>
+					<!--주소-->
+				<tr>
+					<th>주소</th>
+					<td> 
+						<input type="text" id="address"  th:field="*{address}" name="address" class="form-control w-75 bg-white" readonly>	
+					</td>
+				<tr>
+					<th>상세주소</th>
+					<td> 
+						<input type="text" id="detailaddr" th:field="*{detailaddr}" name="detailaddr" class="form-control w-75 bg-white" readonly>	
+					</td>
+				</tr>
+				
+			</table>
+			
+		</form>
+
+	</div>
+	<!--// wrap  -->
+	
+</div>
+
+<!-- // 회원 정보 수정  -->
+
+</body>
+
+</html>

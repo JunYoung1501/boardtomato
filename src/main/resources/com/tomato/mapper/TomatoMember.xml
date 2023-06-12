@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 회원 가입 및 권한 SQL -->
+<mapper namespace="com.tomato.mapper.member">
+ 	
+ 	<!-- 회원 가입 -->
+	<insert id="insert" parameterType="com.tomato.board.membervo.MemberVO">
+		INSERT INTO MEMBER VALUES(
+		#{id},
+		#{pwd},
+		#{name},
+		#{phone},
+		#{email},
+		#{birthday},
+		#{postadd},
+		#{address},
+		#{detailaddr},
+		sysdate,
+		1)
+	</insert>
+	
+	
+	<!--  회원 정보 조회 -->
+	<select id="selectMember" parameterType="String" resultType="com.tomato.board.membervo.MemberVO">
+		SELECT * FROM MEMBER WHERE id = #{id}
+	</select>
+	
+	<!-- 회원 정보 수정  -->
+	<update id="update" parameterType="com.tomato.board.membervo.MemberVO">
+		UPDATE  MEMBER SET 
+			pwd = #{pwd},
+			name = #{name},
+			phone = #{phone},	
+			email = #{email},
+			birthday = #{birthday},
+			postadd = #{postadd},
+			address = #{address},
+			detailaddr = #{detailaddr},
+			joinday =sysdate,
+			status = #{status}
+		WHERE id =#{id}
+	</update>
+	
+	<!-- 회원 삭제  -->
+	<delete id="delete" parameterType="String">
+		DELETE FROM MEMBER WHERE id =#{id} 
+	</delete>
+														
+	
+	<select id="selectByFlds" parameterType="String" resultType="com.tomato.board.membervo.MemberVO">
+		SELECT * FROM MEMBER WHERE 
+		${subSql}
+	</select>
+	
+	<select id="hasMember" parameterType="String" resultType="int">
+		SELECT COUNT(*) FROM MEMBER WHERE id = #{id}
+	</select>
+	
+	<!-- 회원가입시 필드(email,phone) 중복 점검  -->
+	<select id="isMember" parameterType="hashmap" resultType="int">
+		SELECT COUNT(*) FROM MEMBER WHERE ${fld} = #{val}
+	</select>
+	
+	<!-- 회원수정시 필드(email,phone) 중복 점검  -->
+	<select id="isUpdateMember" parameterType="hashmap" resultType="int">
+		SELECT COUNT(*) FROM (
+        	SELECT ${fld} FROM member
+        	WHERE ID !=  #{id}
+    		)
+		WHERE ${fld}=#{val}
+	</select>
+	
+	
+	<!--  전체 회원 수 조회   -->
+	<select id="selectAllCountMember" resultType="int">
+		SELECT count(*) FROM member
+	</select>
+	
+	
+	<!-- role 를 통한 회원 검색 내림차순  -->
+	<select id = "selectMembersSeachingRole" parameterType="hashmap" resultType="com.tomato.board.membervo.MemberVO" >
+		SELECT *
+		FROM (SELECT m.*,
+				FLOOR ((ROWNUM - 1) / #{limit} + 1) page
+			FROM(
+				m.id , m.name , r.role ,m.emailm
+				m.phone, m.postadd , m.address,m.postadd,m.address,m.detailaddr,
+				m.birthday, m.joinday
+			FROM member m, user_roles r
+			WHERE m.id = r.username(+)
+			AND name LIKE '%' 
+			ORDER BY id DESC
+			)m
+			
+		)
+		WHERE page  = #{page}
+	</select>
+	
+	
+	<!-- 페이징 전체 회원 조회 -->
+	<select id="selectMembersByPaging" parameterType="hashmap" resultType="com.tomato.board.membervo.MemberVO">
+		SELECT *  
+		FROM (SELECT m.*,  
+	             FLOOR((ROWNUM - 1) / #{limit} + 1) page  
+	      FROM (
+	             SELECT
+	                 DISTINCT m.id, 
+	                  (
+	                    SELECT LISTAGG(r2.role) WITHIN GROUP (ORDER BY r2.username) 
+	                    FROM user_roles r2, member m2 
+	                    WHERE r2.username = m2.id
+	                    AND r2.username = m.id
+	                 ) AS "ROLE",
+	                m.name, m.phone, m.email,m.birthday,m.postadd,m.address,m.detailaddr,
+	               m.joinday ,m.status 
+	            FROM member m, user_roles r
+	             WHERE m.id = r.username(+)
+	            ORDER BY m.id ASC
+	          ) m  
+	      )  
+		WHERE page = #{page}
+	</select>	
+		
+	<!-- 회원 정보 조회 : 검색  -->
+	<select id="selectMemberSearching" parameterType="hashmap" resultType="com.tomato.board.membervo.MemberVO">
+		SELECT *  
+			FROM (SELECT m.*,  
+			             FLOOR((ROWNUM - 1) / #{limit} + 1) page  
+			      FROM (
+			             SELECT distinct m.id, m.name, (
+						    SELECT LISTAGG(r2.role, ',') WITHIN GROUP (ORDER BY r2.username) 
+						    FROM user_roles r2, member m2 
+						    WHERE r2.username = m2.id
+						    AND r2.username = m.id
+						) AS "ROLE",
+			            m.phone,
+			             m.email,m.postadd,m.address,m.detailaddr,
+			             m.birthday, m.joinday ,m.status
+						 FROM member m, user_roles r
+						 WHERE m.id = r.username
+			            AND  ${searchKey} LIKE '%' || #{searchWord} || '%'
+			             ORDER BY m.id ASC
+			           ) m  
+			      )  
+		WHERE page = #{page}
+	</select>
+	
+	<!-- 검색어를 통한 회원 정보 조회  -->
+	<select id="selectMembersCountSearching" parameterType="hashmap" resultType="int">
+		SELECT count(*)
+		FROM (
+	       		SELECT
+		        DISTINCT m.id,  (
+		            SELECT LISTAGG(r2.role, ',') WITHIN GROUP (ORDER BY r2.username) 
+		            FROM user_roles r2, member m2 
+		            WHERE r2.username = m2.id
+		            AND r2.username = m.id
+		        ) AS "ROLE"
+		        FROM member m, user_roles r 
+		        WHERE ${searchKey} LIKE '%' || #{searchWord} || '%'
+		        ORDER BY id ASC
+		) 
+	</select>
+	
+	<!-- 회원 롤(Role) 조회 -->
+	<select id ="selectMemberRole" parameterType="String" resultType="String">
+		SELECT role FROM user_roles WHERE username = #{username} 
+	</select>
+	
+	<!-- 회원 롤(Role) 정보 추가 -->
+	<insert id="insertMemberRole" parameterType="com.tomato.common.vo.Role">
+		INSERT INTO user_roles VALUES ( USER_ROLES_SEQ.nextval,#{username},#{role})
+	</insert>
+	
+	<!-- 회원 롤(Role) 정보 삭제 -->
+	<delete id="deleteMemberRole" parameterType="com.tomato.common.vo.Role">
+		DELETE user_roles
+		WHERE username = #{username} AND role = #{role}
+	</delete>
+	
+	
+</mapper>

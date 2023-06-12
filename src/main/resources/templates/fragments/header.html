@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+ 	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<th:block th:fragment="header">
+
+	<th:headers class="d-flex justify-content-between py-3" style="height:100px">
+	
+		<!-- 인자 대쉬보드  -->
+		
+		<!--  <div class="offcanvas offcanvas-top" id="arg_dash">
+		  <div class="offcanvas-header">
+		    <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+		  </div>
+		  인자 확인 
+		    <div class="offcanvas-body">
+		  	   memberList.size=[[${memberList == null ? "회원정보 없음" :  #lists.size(memberList)}]]<br>
+		  	   pageVO=[[${pageVO}]]<br>
+		  	   댓글들 =[[${boardList}]]<br>
+			   인증정보=[[${#httpServletRequest.getUserPrincipal()}]]<br>
+			   boardVO=[[${boardVO}]]<br>
+		 	   boardDTO=[[${boardDTO}]]<br>
+			   boardOriginalFileName=[[${boardOriginalFileName}]]<br>
+			   boardFileName=[[${boardFileName}]]<br>
+			   memberVO=[[${memberVO}]]<br>
+				  <div th:if="${session.SPRING_SECURITY_CONTEXT != null}">
+			  </div>
+		  </div> 
+		</div>  -->
+	
+		 <!-- 이 부분은 인증 정보 확인용입니다. -->
+	<!-- 	인증 정보 :[[${session.SPRING_SECURITY_CONTEXT}]]<br>
+		인증 정보 :[[${session.SPRING_SECURITY_CONTEXT == null ? "미인증" : "인증"}]]<br>
+		 -->
+		 
+		<ul class="nav nav-pills">
+		  <!-- 인자 대쉬보드 -->
+
+	<!-- 	  <li class="nav-item mx-3">
+			<a th:href="@{/}" class="nav-link active" aria-current="page" data-bs-toggle="offcanvas" data-bs-target="#arg_dash">@</a>
+		  </li> -->
+		  
+		  <!-- 메인 페이지 -->
+		  <li class="nav-item mx-3">
+			<a th:href="@{/}" class="nav-link active" aria-current="page">home</a>
+		  </li>
+		  <!--// 메인 페이지  -->
+		  
+		  <!--  게시판  -->
+		  <li class="nav-item mx-3">
+			<a th:href="@{/board/boardlist.do/1}" class="nav-link active" aria-current="page">게시판</a>
+		  </li>
+		  <!--// 게시판  -->
+		 
+		  <!-- 회원 정보 보기 -->
+		  <li class="nav-item mx-3" th:if="${session.SPRING_SECURITY_CONTEXT != null
+		  									&& session.SPRING_SECURITY_CONTEXT.Authentication.principal.authorities[0].role == 'ROLE_USER'}">
+		  	<a th:href="@{'/member/memberView.do?id='+${session.SPRING_SECURITY_CONTEXT.Authentication.Principal.username}}" class ="nav-link active" aria-current="page">회원정보 보기</a>	
+		  </li>
+		  <!--// 회원 정보 보기  -->
+		  
+		  <!-- 회원 정보 수정 -->
+		  <li class="nav-item mx-3" th:if="${session.SPRING_SECURITY_CONTEXT != null
+		  									&& session.SPRING_SECURITY_CONTEXT.Authentication.principal.authorities[0].role == 'ROLE_USER'}">
+		  	<a th:href="@{'/member/memberUpdate.do?id='+${session.SPRING_SECURITY_CONTEXT.Authentication.Principal.username}}" class ="nav-link active" aria-current="page">회원정보 수정</a>	
+		  </li>
+		  <!-- // 회원 정보 수정  -->
+		  
+		
+		  
+		  <!-- 마이 페이지 -->
+		  <li class="nav-item mx-3" th:if="${session.SPRING_SECURITY_CONTEXT != null
+		  									&& session.SPRING_SECURITY_CONTEXT.Authentication.principal.authorities[0].role == 'ROLE_USER'}">
+		  	<a th:href="@{/member/myPage.do}" class ="nav-link active" aria-current="page">마이페이지</a>	
+		  </li>
+		  <!-- // 마이 페이지  -->
+		  
+		  <!-- 관리자 전용 -->
+		  <li class="nav-item mx-3" th:if="${session.SPRING_SECURITY_CONTEXT != null
+		  								 && session.SPRING_SECURITY_CONTEXT.Authentication.Principal.authorities[0].role == 'ROLE_ADMIN'}">
+				<a th:href="@{'/admin/memberlist.do/1'}" class="nav-link active" aria-current="page">관리자 페이지</a>
+				<!-- +${_csrf.parameterName}+'='+${_csrf.token} -->
+		  </li>
+		  
+		</ul>
+		
+		<div class="col-md-3 text-end me-4">
+		
+			<!-- 로그인 인증 안되었을 때   -->	
+			<div th:if="${session.SPRING_SECURITY_CONTEXT == null}">
+				<button type="button" class="btn btn-outline-primary me-2" th:onclick="'location.href=\''+@{/login.do}+'\''">Login</button>
+				<button type="button" class="btn btn-primary" th:onclick="'location.href=\''+@{/member/join.do}+'\''">sign-up</button>
+			</div>
+			
+			<!-- 로그인 인증시 -->							
+			<div th:if="${session.SPRING_SECURITY_CONTEXT != null}" class="py-1 px-3">
+		    	 
+ 			    <span th:text="${session.SPRING_SECURITY_CONTEXT.Authentication.Principal.username}"></span>님 로그인 하셨습니다
+ 			    <button type="button" class="btn btn-outline-primary mx-2" th:onclick="'location.href=\''+@{/logout.do}+'\''">Logout</button>
+ 			    	
+			</div>
+						
+		</div>										
+	</th:headers>									
+	
+</th:block>
+
+</html>
