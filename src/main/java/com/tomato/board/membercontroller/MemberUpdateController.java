@@ -30,7 +30,6 @@ public class MemberUpdateController {
 	 *  회원 정보 보기
 	 * @param id
 	 * @param model
-	 * @param session
 	 * @return
 	 */
 	@GetMapping("/memberView.do")
@@ -71,12 +70,8 @@ public class MemberUpdateController {
 	
 	/**
 	 * 회원정보 수정Proc
-	 * @param memberVO
-	 * @param model
 	 * @param request
-	 * @param sessionStatus
 	 * @param session
-	 * @return
 	 */
 	@PostMapping("/memberUpdateProc.do")
 	public String memberUpdateProc(@ModelAttribute("memberVO") MemberVO updateMemberVO,

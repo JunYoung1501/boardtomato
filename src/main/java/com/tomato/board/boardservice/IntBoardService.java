@@ -10,7 +10,7 @@ public interface IntBoardService {
 	
 	/**
 	 * 게시글 저장
-	 * @param 게시글 저장 입니다
+	 * 
 	 * @return flag 방식 
 	 * 		   true 일때  게시글 저장
 	 * 	       false 이면 게시글 저장 실패
@@ -35,8 +35,6 @@ public interface IntBoardService {
 	
 	/**개별 게시글 조회
 	 * 
-	 * @param BoardVO 
-	 * @return boardNum
 	 */
 	public BoardVO getBoard(int boardNum);
 	

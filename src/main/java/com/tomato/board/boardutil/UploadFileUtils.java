@@ -19,8 +19,9 @@ import lombok.extern.slf4j.Slf4j;
 public class UploadFileUtils {
     
     /**
-     * @param filePath
-     * @param multipartFile
+     * 파일저장
+     * @param uploadPath
+     * @param file
      * @return 생성된 파일 명(유일한 값)
      * @throws IllegalStateException
      * @throws IOException
@@ -67,6 +68,11 @@ public class UploadFileUtils {
         }
     }
     
+    /**
+     *  파일 업로드 날짜
+     * @param uploadPath
+     * @return
+     */
     private static String calcPath(String uploadPath) {
         
         Calendar cal = Calendar.getInstance();
@@ -82,6 +88,11 @@ public class UploadFileUtils {
         return datePath;
     }
     
+    /**
+     *  업로드 된 파일 저장 경로
+     * @param uploadPath
+     * @param paths
+     */
     private static void makeDir(String uploadPath, String... paths) {
         
         log.info(paths[paths.length - 1] + " : " + new File(paths[paths.length - 1]).exists());
@@ -99,12 +110,28 @@ public class UploadFileUtils {
         }
     }
     
+    /**
+     * 파일경로 +'/' 추가
+     * @param uploadPath
+     * @param path
+     * @param fileName
+     * @return
+     * @throws IOException
+     */
     private static String makeFilePath(String uploadPath, String path, String fileName) throws IOException {
        
     	String filePath = uploadPath + path + File.separator + fileName;
         return filePath.substring(uploadPath.length()).replace(File.separatorChar, '/');
     }
     
+    /**
+     *  파일 이름 추가 
+     * @param uploadPath
+     * @param path
+     * @param fileName
+     * @return
+     * @throws Exception
+     */
     private static String makeThumbnail(String uploadPath, String path, String fileName) throws Exception {
         
         BufferedImage sourceImg = ImageIO.read(new File(uploadPath + path, fileName));
