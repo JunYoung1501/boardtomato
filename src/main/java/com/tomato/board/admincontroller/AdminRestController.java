@@ -22,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
  * 관리자 회원 관리 컨트롤러
  * 역할부여 ex) ADMIN / USER 
  * 활동기능 부여 ex) 활동계정 휴면 계정
- * @author TJ
+ * @author 문준영
  *
  */
 @RestController
@@ -72,31 +72,51 @@ public class AdminRestController {
 		if (role1.equals("ROLE_ADMIN") && roles.contains("ROLE_ADMIN") == false) { 
 
 			// 관리자 롤 삽입
-			  role.setRole(role1);
-			  memberService.insertRole(role);
-			 
+			role.setRole(role1);
+			memberService.insertRole(role);
+			member.setStatus(1); // 사용자계정으로 치환
+			memberService.updateMember(member);
 			msg += "관리자 권한이 할당되었습니다.";
 		
 		// 기존에 관리자 권한이 있고, 관리자 권한이 회수되었다면(미할당) 
 		} else if (role1.equals("") && roles.contains("ROLE_ADMIN") == true) {
+			log.info("0");
+			// 관리자 롤 삭제
 			
+			role.setRole("ROLE_ADMIN");
+			memberService.deleteRole(role);
+			
+			if(roles.contains("ROLE_USER") == false) {
+				member.setStatus(0); // 휴면계정으로 치환
+				memberService.updateMember(member); 
+			}
+			msg += "관리자 권한이 삭제되었습니다.";
+			
+		 // 기존에 관리자 권한이 있고, 관리자 권한이 회수되었다면(미할당) 
+		}  else if ((role1.equals("") && role2.equals("")) && roles.contains("ROLE_ADMIN") == true) {
+			
+			log.info("1");
 			// 관리자 롤 삭제
 			role.setRole("ROLE_ADMIN");
-			memberService.deleteRole(role);				 
+			memberService.deleteRole(role);
+			member.setStatus(0);
 			msg += "관리자 권한이 삭제되었습니다.";
-		} 
+	    } 
 		
 		// 회원 권한이 신규 할당되었고, 기존에 회원 권한이 없으면
 		if (role2.equals("ROLE_USER") && roles.contains("ROLE_USER") == false) {
-			
+			log.info("2");
+			log.info("role2:"+role2);
 			role.setRole(role2);
 			memberService.insertRole(role);
+			member.setStatus(1); // 사용자계정으로 치환
+			memberService.updateMember(member);
 			
 			msg += "회원 권한이 할당되었습니다.";
 
 		// 기존에 회원 권한이 있고, 회원 권한이 회수되었다면(미할당)
-		} else if (role2.equals("") && roles.contains("ROLE_USER") == true) {
-				
+		} else if ((role1.equals("") && role2.equals("")) && roles.contains("ROLE_USER") == true) {
+			log.info("3");	
 			role.setRole("ROLE_USER");
 			memberService.deleteRole(role);
 			member.setStatus(0); // 휴면계정으로 치환 
@@ -104,13 +124,11 @@ public class AdminRestController {
 			memberService.updateMember(member); // 회원정보에 반영
 			
 			msg += "회원 권한이 삭제되었습니다.";
-
-		}	
+		}
 		
 		return new ResponseEntity<>(msg, HttpStatus.OK);
 	} //
 	
 	
-//	
+}//	
 	
-}
