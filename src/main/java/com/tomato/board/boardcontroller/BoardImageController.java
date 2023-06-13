@@ -20,6 +20,12 @@ import com.tomato.board.boardservice.ImageService;
 import com.tomato.board.boardutil.MediaUtils;
 import com.tomato.board.boardvo.UploadFile;
 
+/**
+ * 게시판 이미지 업로드 
+ * 암호화
+ * @author 문준영
+ *
+ */
 @RestController
 @RequestMapping("/board")
 public class BoardImageController {

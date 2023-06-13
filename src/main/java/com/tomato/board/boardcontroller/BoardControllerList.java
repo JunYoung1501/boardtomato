@@ -20,6 +20,12 @@ import com.tomato.board.boardvo.PageVO;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 게시판 목록 컨트롤러
+ * 페이징
+ * @author 문준영
+ *
+ */
 @Slf4j
 @Controller
 @RequestMapping("/board")

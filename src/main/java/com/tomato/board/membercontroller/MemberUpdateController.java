@@ -11,13 +11,18 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.support.SessionStatus;
 
 import com.tomato.board.memberservice.MemberService;
 import com.tomato.board.membervo.MemberVO;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 회원정보 처리 컨트롤러
+ *  
+ * @author 문준영
+ *
+ */
 @Controller
 @Slf4j
 @RequestMapping("/member")
@@ -69,7 +74,8 @@ public class MemberUpdateController {
 	}
 	
 	/**
-	 * 회원정보 수정Proc
+	 * 회원정보 수정처리 
+	 * 
 	 * @param request
 	 * @param session
 	 */

@@ -22,6 +22,12 @@ import com.tomato.board.boardservice.BoardService;
 import com.tomato.board.boardvo.BoardVO;
 import com.tomato.common.vo.CustomUser;
 
+/**
+ * 게시판 댓글 컨트롤러
+ * 댓글 작성 /조회 /삭제 
+ * @author 문준영
+ *
+ */
 @RestController
 @RequestMapping("/board")
 public class BoardReplyController {

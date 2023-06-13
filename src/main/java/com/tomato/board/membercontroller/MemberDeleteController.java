@@ -20,6 +20,11 @@ import com.tomato.common.vo.Role;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 회원 삭제 컨트롤러
+ * @author 문준영
+ *
+ */
 @Controller
 @RequestMapping("/member")
 @Slf4j

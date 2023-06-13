@@ -17,6 +17,14 @@ import com.tomato.common.vo.Role;
 
 import lombok.extern.slf4j.Slf4j;
 
+
+/**
+ * 관리자 회원 관리 컨트롤러
+ * 역할부여 ex) ADMIN / USER 
+ * 활동기능 부여 ex) 활동계정 휴면 계정
+ * @author TJ
+ *
+ */
 @RestController
 @RequestMapping("/admin")
 @Slf4j

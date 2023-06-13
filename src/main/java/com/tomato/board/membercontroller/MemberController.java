@@ -18,6 +18,12 @@ import com.tomato.board.membervo.MemberVO;
 //import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 로그인 컨트롤러
+ * 가입 형식 처리 
+ * @author 문준영
+ *
+ */
 @Controller
 @Slf4j
 @RequestMapping("/member")

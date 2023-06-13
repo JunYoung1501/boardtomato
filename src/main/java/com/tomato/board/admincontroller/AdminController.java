@@ -19,6 +19,13 @@ import com.tomato.board.membervo.MemberVO;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ *  관리자 회원관리 컨트롤러
+ *  
+ *  회원검색 
+ * @author 문준영
+ *
+ */
 @Controller
 @Slf4j
 @RequestMapping("/admin")

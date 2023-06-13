@@ -24,7 +24,11 @@ import com.tomato.board.boardservice.BoardService;
 
 import lombok.extern.slf4j.Slf4j;
 
-/* 첨부 파일 다운 로드 컨트롤러 */
+/** 첨부 파일 다운 로드 컨트롤러
+ *  첨부파일 암호화
+ * @author 문준영
+ *
+ */
 @Controller
 @Slf4j
 public class BoardDownloadController {

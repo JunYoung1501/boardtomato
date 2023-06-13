@@ -12,6 +12,11 @@ import com.tomato.board.memberservice.IntMemberSerivce;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 회원정보 변경 컨트롤러
+ * @author 문준영
+ *
+ */
 @Slf4j
 @RestController
 @RequestMapping("/member")

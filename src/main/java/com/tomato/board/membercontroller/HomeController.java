@@ -21,6 +21,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 
+/**
+ * 페이지 컨트롤러
+ * 메인 페이지 / 로그인 / 로그아웃 
+ * @author 문준영
+ *
+ */
 @Slf4j
 @Controller
 public class HomeController {

@@ -27,6 +27,11 @@ import com.tomato.board.boardvo.FileVO;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 게시글 수정 컨트롤러
+ * @author 문준영
+ *
+ */
 @Controller
 @SessionAttributes("boardDTO")
 @Slf4j

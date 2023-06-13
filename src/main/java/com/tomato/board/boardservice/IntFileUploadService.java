@@ -15,9 +15,9 @@ public interface IntFileUploadService {
 	/**
 	 * 삽입 이미지 파일 삭제 서비스
 	 *
-	 * @param uploadPath 업로드된 파일 경로
-	 * @param file 삭제할 삽입 이미지 업로드 파일명(인코딩된 파일명)
-	 * @return 삭제 결과 메시지
+	 *  uploadPath 업로드된 파일 경로
+	 *  file 삭제할 삽입 이미지 업로드 파일명(인코딩된 파일명)
+	 *  삭제 결과 메시지
 	 */
 	public String deleteUploadFile(String uploadPath, String encodingFilename);
 
