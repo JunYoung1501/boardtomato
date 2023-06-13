@@ -1,1 +1,15 @@
+com.tomato
+com.tomato.board.admincontroller
+com.tomato.board.boardcontroller
+com.tomato.board.boarddao
+com.tomato.board.boardfile
 com.tomato.board.boardservice
+com.tomato.board.boardutil
+com.tomato.board.boardvo
+com.tomato.board.membercontroller
+com.tomato.board.memberdao
+com.tomato.board.memberservice
+com.tomato.board.membervo
+com.tomato.common.service
+com.tomato.common.vo
+com.tomato.config
