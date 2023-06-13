@@ -75,7 +75,7 @@ public class MemberService implements IntMemberSerivce {
 		String msg ="";
 		boolean result = false;
 		try {
-			memberDAO.update(member);
+			memberDAO.updateMember(member);
 			result =true;
 			//msg="회원정보수정에 성공하였습니다";
 		}catch(Exception e) {

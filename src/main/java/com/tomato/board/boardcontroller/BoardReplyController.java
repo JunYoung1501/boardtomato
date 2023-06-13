@@ -66,7 +66,7 @@ public class BoardReplyController {
 		if (boardService.insertBoard(boardVO) == true) {
 			
 			// 원글의 기존 댓글을 모두 가져와야함
-			List<BoardVO>  boardList =  boardService.boardReplySelect(boardNum);
+			List<BoardVO>  boardList =  boardService.getboardReplySelect(boardNum);
 			
 			
 			for (BoardVO boardVO2 : boardList) {
@@ -92,7 +92,7 @@ public class BoardReplyController {
 		
 		log.info("댓글 조회");
 		
-		List<BoardVO> boardList = boardService.boardReplySelect(boardNum);
+		List<BoardVO> boardList = boardService.getboardReplySelect(boardNum);
 			
 		return new ResponseEntity<>(boardList, HttpStatus.OK);
 	} //
@@ -164,7 +164,7 @@ public class BoardReplyController {
 		log.info("msg : " + msg);
 		
 		// 원글의 기존 댓글을 모두 가져와야함
-		List<BoardVO>  boardList = boardService.boardReplySelect(boardReRef);
+		List<BoardVO>  boardList = boardService.getboardReplySelect(boardReRef);
 		map.put("msg", msg);
 		map.put("boardList", boardList);
 		
@@ -226,7 +226,7 @@ public class BoardReplyController {
 		log.info("msg : " + msg);
 			
 		// 원글의 기존 댓글을 모두 가져와야함
-		List<BoardVO>  boardList = boardService.boardReplySelect(boardReRef);
+		List<BoardVO>  boardList = boardService.getboardReplySelect(boardReRef);
 				
 		map.put("msg", msg);
 		map.put("boardList", boardList);

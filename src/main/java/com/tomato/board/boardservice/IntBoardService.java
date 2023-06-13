@@ -152,6 +152,6 @@ public interface IntBoardService {
 	 * @param boardReRef
 	 * @return
 	 */
-	public List<BoardVO> boardReplySelect(int boardReRef);
+	public List<BoardVO> getboardReplySelect(int boardReRef);
 	
 }

@@ -22,7 +22,7 @@ public class MemberDAO {
 	 * @param memberVO
 	 */
 	public void insert(MemberVO memberVO) {
-		sqlSession.insert("com.tomato.mapper.member.insert",memberVO);
+		sqlSession.insert("com.tomato.mapper.member.insertMember",memberVO);
 	}
 	
 	/** 회원Role 주입
@@ -72,8 +72,8 @@ public class MemberDAO {
 	 * 
 	 * @param memberVO
 	 */
-	public  void update(MemberVO memberVO) {
-		sqlSession.update("com.tomato.mapper.member.update",memberVO);
+	public  void updateMember(MemberVO memberVO) {
+		sqlSession.update("com.tomato.mapper.member.updateMember",memberVO);
 	}
 	/** 회원정보 삭제
 	 * 

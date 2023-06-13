@@ -35,8 +35,8 @@ public class BoardControllerList {
 	private BoardService boardService;
 	
 	
-	/**게시판 리스트
-	 *  
+	/**
+	 * 게시판 리스트
 	 * @param currentPage 현재 페이지
 	 * @param model 
 	 * @return
@@ -84,8 +84,8 @@ public class BoardControllerList {
 		return "board/boardlist";
 	}
 	
-	/** 검색 페이지
-	 *  
+	/** 
+	 * 검색 페이지
 	 * @param page 현재 페이지
 	 * @param limit 페이지 제한 
 	 * @param orderKey  검색어 제한 ex) 회원 아이디 , 회원 이름 etc..

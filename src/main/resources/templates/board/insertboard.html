@@ -114,7 +114,7 @@
 			<div>
 			
 				<div>
-					<h4 class="modal-title my-4">게시글 쓰기</h4>
+					<h4 class="modal-title my-4">게시글 쓰기</h4> 
 				</div>
 				
 				<div class="border border-1 p-2">
@@ -131,12 +131,9 @@
 								<input type="text" 
 								       id="boardId"
 									   name="boardId" 
-									   class="form-control" 
-									   th:field="*{boardId}"
-									   title="게시글 작성자를  8~20자 이내로 입력하십시오"
-									   required
-									   pattern="^[a-zA-Z]{1}\w{7,19}$"
-									   autocomplete="off"/> <!--글쓴이가 회원아이디가 들어가도록 readOnly --> 
+									   class="form-control bg-white" 
+									   th:value="${session.SPRING_SECURITY_CONTEXT.Authentication.Principal.username}"
+									   readonly/> <!--글쓴이가 회원아이디가 들어가도록 readOnly --> 
 							</td>
 						</tr>
 		

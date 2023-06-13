@@ -334,9 +334,9 @@ public class BoardService implements IntBoardService {
 	 */
 	@Transactional(readOnly=true)
 	@Override
-	public List<BoardVO> boardReplySelect(int boardReRef) {
+	public List<BoardVO> getboardReplySelect(int boardReRef) {
 		
-		return boardDAO.boardReplySelect(boardReRef);
+		return boardDAO.getboardReplySelect(boardReRef);
 	}
 
 }

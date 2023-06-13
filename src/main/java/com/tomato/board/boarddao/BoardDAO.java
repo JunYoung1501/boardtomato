@@ -35,7 +35,7 @@ public class BoardDAO {
 		HashMap<String,Integer> map =new HashMap<>();
 		map.put("page", page);
 		map.put("limit", limit);
-		return sqlSession.selectList("com.tomato.mapper.board.boardPaging", map);
+		return sqlSession.selectList("com.tomato.mapper.board.getboardPaging", map);
 	}
 	
 	/** 게시글 수정 댓글x
@@ -79,7 +79,7 @@ public class BoardDAO {
 	 * @return
 	 */
 	public BoardVO  getBoard(int boardNum) {
-		return sqlSession.selectOne("com.tomato.mapper.board.getBoardlist",boardNum);
+		return sqlSession.selectOne("com.tomato.mapper.board.getBoard",boardNum);
 	}
 	
 	/** 게시글 존재여부
@@ -160,8 +160,8 @@ public class BoardDAO {
 	 * @param boardReRef
 	 * @return
 	 */
-	public List<BoardVO> boardReplySelect (int boardReRef) {
+	public List<BoardVO> getboardReplySelect (int boardReRef) {
 		
-		return	sqlSession.selectList("com.tomato.mapper.board.boardReplySelect", boardReRef);
+		return	sqlSession.selectList("com.tomato.mapper.board.getboardReplySelect", boardReRef);
 	}
 }

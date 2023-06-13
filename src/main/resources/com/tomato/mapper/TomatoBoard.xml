@@ -50,10 +50,10 @@
 	</select>
 	
 	<!-- 게시판  내용 조회(ex) id 게시자 제목 ...etc) -->	
-	<select id="getBoardlist" parameterType="int" resultType="com.tomato.board.boardvo.BoardVO">
+	<select id="getBoard" parameterType="int" resultType="com.tomato.board.boardvo.BoardVO">
 		SELECT  
-				BOARD_ID AS "boardId",
 				BOARD_NUM AS "boardNum",
+				BOARD_ID AS "boardId",
 	            BOARD_TITLE AS "boardTitle",
 	            BOARD_CONTENT AS "boardContent",
 	            BOARD_ORIGINAL_FILE AS "boardOriginalFile",
@@ -63,7 +63,7 @@
 	            BOARD_RE_SEQ AS "boardReSeq",
 	            BOARD_READCOUNT AS "boardReadCount",
 	            BOARD_DATE AS "boardDate"
-        FROM BOARD WHERE board_Num = #{boardNum}
+        FROM BOARD WHERE BOARD_NUM = #{boardNum}
 	</select>
 	
 	<!--  게시판 수정 댓글 x  -->
@@ -115,7 +115,7 @@
 	</select>
 	
 	<!--게시판 페이징  원글만 추출 -->
-	<select id="boardPaging" parameterType="hashmap" resultType="com.tomato.board.boardvo.BoardVO" >
+	<select id="getboardPaging" parameterType="hashmap" resultType="com.tomato.board.boardvo.BoardVO" >
 		SELECT n.board_num as boardNum,
 		    n.board_id as boardId,
 		    n.board_title as boardTitle,
@@ -202,7 +202,7 @@
 	
 	
 	<!-- 원글의 모든 댓글 가져오기  -->
-	<select  id ="boardReplySelect" parameterType="int" resultType="com.tomato.board.boardvo.BoardVO">
+	<select  id ="getboardReplySelect" parameterType="int" resultType="com.tomato.board.boardvo.BoardVO">
 		SELECT 
 				BOARD_ID AS "boardId",
 				BOARD_NUM AS "boardNum",

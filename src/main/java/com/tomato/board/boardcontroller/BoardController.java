@@ -44,8 +44,8 @@ public class BoardController {
 	@Autowired
 	IntFileUploadService fileUploadService;
 	
-	/**게시글 쓰기
-	 * 
+	/**
+	 * 게시글 쓰기
 	 * @param textMulti 게시글 안에 내용 ex) 글 , 이미지 , 웹페이지 , 유튜브 링크 etc ..
 	 * @param model
 	 * @return
@@ -65,8 +65,8 @@ public class BoardController {
 		return returnPath;
 	}//boardWriterText
 
-	/**게시글 처리
-	 * 
+	/**
+	 * 게시글 처리
 	 * @param boardId 회원 아이디
 	 * @param boardDTO  
 	 * @param file  첨부 파일 (암호화)
@@ -154,7 +154,7 @@ public class BoardController {
 			log.info("boardVO:--"+boardVO);
 		
 			//댓글들 조회
-			List<BoardVO>  boardList =  boardService.boardReplySelect(boardNum);
+			List<BoardVO>  boardList =  boardService.getboardReplySelect(boardNum);
 			for (BoardVO boardVO2 : boardList) {
 				log.info("boardVO2:"+ boardVO2);
 			}
