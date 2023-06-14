@@ -177,7 +177,8 @@ public class BoardService implements IntBoardService {
 		return false;
 	}
 
-	/**게시글 조회
+	/**
+	 * 게시글 조회
 	 * 리스트화
 	 */
 	@Override
@@ -215,7 +216,8 @@ public class BoardService implements IntBoardService {
 		return boardDAO.selectCountBoardsSearch(map);
 	}
 	
-	/**게시글 중 이미지 삽입
+	/**
+	 * 게시글 중 이미지 삽입
 	 * 
 	 */
 	@Override
@@ -291,7 +293,8 @@ public class BoardService implements IntBoardService {
 		return null;
 	}
 	
-	/**게시글 가져오기
+	/**
+	 * 게시글 가져오기
 	 * 
 	 */
 	@Override
@@ -299,7 +302,8 @@ public class BoardService implements IntBoardService {
 		return null;
 	}
 	
-	/**첨부파일 가져오기
+	/**
+	 * 첨부파일 가져오기
 	 * 
 	 */
 	@Override
@@ -307,7 +311,8 @@ public class BoardService implements IntBoardService {
 		return null;
 	}
 	
-	/**게시글 중 포함된 이미지 삭제
+	/**
+	 * 게시글 중 포함된 이미지 삭제
 	 * 
 	 */
 	@Transactional

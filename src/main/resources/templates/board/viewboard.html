@@ -49,33 +49,41 @@
 		console.log(replys);
 		var replyJSON = JSON.parse(replys);
 		console.log(replyJSON.length);
-		console.log(replyJSON[0].boardNum);
+	
 		
 		var replysHtml ="";
+		//console.log("1:");
 		
-		for(var i=0 ; i<replyJSON.length;i++){
-			/* 이전 댓글내용은 title 취소시 복원용 */
-			var temp = '<div class="card-body d-flex justify-content-around">'+
-							'<div style="width: 70%;">'+
-								'<input class="form-control input-sm bg-white" id="boardReplyFidContent'+replyJSON[i].boardNum+'" type="text" readonly value="'+replyJSON[i].boardContent+'" title="'+replyJSON[i].boardContent+'">'+
-							'</div>'+
-							'<div style="width: 20%" class="mx-2">'+
-								'<input class="form-control input-sm bg-white" id="boardReplyWriter'+replyJSON[i].boardNum+'" type="text" readonly value="'+replyJSON[i].boardId+'">'+
-							'</div>'+    
-							'<div style="width: 5%" class="mx-2">'+
-								'<i id="boardReply_select_btn'+i+'" title="'+replyJSON[i].boardNum+'" class="bi bi-three-dots-vertical"></i>'+ 
-							'</div>'+
-							'<div style="width: 10%">'+
-								'<i id="boardReply_submit_btn'+replyJSON[i].boardNum+'" title="댓글 수정 전송" class="bi bi-pencil-square mx-3"></i>'+
-								'<i id="boardReply_cancel_btn'+replyJSON[i].boardNum+'" title="취소" class="bi bi-arrow-clockwise"></i>'+
-							'</div>'+
-						'</div>';
-			replysHtml += temp;
-		} //for
+		if(replyJSON.length > 0){
+			
+			console.log(replyJSON[0].boardNum);
 		
-		$("#replys").html(replysHtml);
+			for(var i=0 ; i<replyJSON.length;i++){
+				/* 이전 댓글내용은 title 취소시 복원용 */
+				var temp = '<div class="card-body d-flex justify-content-around">'+
+								'<div style="width: 70%;">'+
+									'<input class="form-control input-sm bg-white" id="boardReplyFidContent'+replyJSON[i].boardNum+'" type="text" readonly value="'+replyJSON[i].boardContent+'" title="'+replyJSON[i].boardContent+'">'+
+								'</div>'+
+								'<div style="width: 20%" class="mx-2">'+
+									'<input class="form-control input-sm bg-white" id="boardReplyWriter'+replyJSON[i].boardNum+'" type="text" readonly value="'+replyJSON[i].boardId+'">'+
+								'</div>'+    
+								'<div style="width: 5%" class="mx-2">'+
+									'<i id="boardReply_select_btn'+i+'" title="'+replyJSON[i].boardNum+'" class="bi bi-three-dots-vertical"></i>'+ 
+								'</div>'+
+								'<div style="width: 10%">'+
+									'<i id="boardReply_submit_btn'+replyJSON[i].boardNum+'" title="댓글 수정 전송" class="bi bi-pencil-square mx-3"></i>'+
+									'<i id="boardReply_cancel_btn'+replyJSON[i].boardNum+'" title="취소" class="bi bi-arrow-clockwise"></i>'+
+								'</div>'+
+							'</div>';
+				replysHtml += temp;
+			} //for
+			
+			//console.log("2:");
+			$("#replys").html(replysHtml);
+			
+		} // if
 		
-		 //댓글 등록
+		 /* 댓글 등록 */
 		$("#boardReplyFidBtn").click(function(e){
 			
 			alert("댓글 등록")
@@ -107,36 +115,44 @@
 					//  변경된 댓글 현황 적용
 						var replyJSON = JSON.parse(data);
 						console.log(replyJSON.length);
-						console.log(replyJSON[0].boardNum);
-						
 						var replysHtml ="";
+			
+						if(replyJSON.length > 0){
+							
+							console.log(replyJSON[0].boardNum);
+							
+							for(var i=0 ; i<replyJSON.length;i++){
+								// 이전 댓글내용은 title 취소시 복원용 
+								var temp = '<div class="card-body d-flex justify-content-around">'+
+												'<div style="width: 70%;">'+
+													'<input class="form-control input-sm bg-white" id="boardReplyFidContent'+replyJSON[i].boardNum+'" type="text" readonly value="'+replyJSON[i].boardContent+'" title="'+replyJSON[i].boardContent+'">'+
+												'</div>'+
+												'<div style="width: 20%" class="mx-2">'+
+													'<input class="form-control input-sm bg-white" id="boardReplyWriter'+replyJSON[i].boardNum+'" type="text" readonly value="'+replyJSON[i].boardId+'">'+
+												'</div>'+    
+												'<div style="width: 5%" class="mx-2">'+
+													'<i id="boardReply_select_btn'+i+'" title="'+replyJSON[i].boardNum+'" class="bi bi-three-dots-vertical"></i>'+ 
+												'</div>'+
+												'<div style="width: 10%">'+
+													'<i id="boardReply_submit_btn'+replyJSON[i].boardNum+'" title="댓글 수정 전송" class="bi bi-pencil-square mx-3"></i>'+
+													'<i id="boardReply_cancel_btn'+replyJSON[i].boardNum+'" title="취소" class="bi bi-arrow-clockwise"></i>'+
+												'</div>'+
+											'</div>';
+								replysHtml += temp;
+							} //for
 						
-						for(var i=0 ; i<replyJSON.length;i++){
-							// 이전 댓글내용은 title 취소시 복원용 
-							var temp = '<div class="card-body d-flex justify-content-around">'+
-											'<div style="width: 70%;">'+
-												'<input class="form-control input-sm bg-white" id="boardReplyFidContent'+replyJSON[i].boardNum+'" type="text" readonly value="'+replyJSON[i].boardContent+'" title="'+replyJSON[i].boardContent+'">'+
-											'</div>'+
-											'<div style="width: 20%" class="mx-2">'+
-												'<input class="form-control input-sm bg-white" id="boardReplyWriter'+replyJSON[i].boardNum+'" type="text" readonly value="'+replyJSON[i].boardId+'">'+
-											'</div>'+    
-											'<div style="width: 5%" class="mx-2">'+
-												'<i id="boardReply_select_btn'+i+'" title="'+replyJSON[i].boardNum+'" class="bi bi-three-dots-vertical"></i>'+ 
-											'</div>'+
-											'<div style="width: 10%">'+
-												'<i id="boardReply_submit_btn'+replyJSON[i].boardNum+'" title="댓글 수정 전송" class="bi bi-pencil-square mx-3"></i>'+
-												'<i id="boardReply_cancel_btn'+replyJSON[i].boardNum+'" title="취소" class="bi bi-arrow-clockwise"></i>'+
-											'</div>'+
-										'</div>';
-							replysHtml += temp;
-						} //for
 						
-						$("#replys").html(replysHtml);		
-				
-				
+							$("#replys").html(replysHtml);		
+						}// if
+					
+					//	console.log("3:");
 				}//success
 				
 			});//ajax
+			
+			//화면 현황 리프레시
+			location.reload();
+			
 			
 		});//function
 		
@@ -280,7 +296,12 @@
 				
 				}//success
 				
+				
 			}); //ajax
+			
+			//화면 현황 리프레시
+			location.reload();
+			
 			
 		});
 		
@@ -314,11 +335,13 @@
 						 var replyJSON = JSON.parse(data);
 						console.log(replyJSON.length);
 						console.log(replyJSON.msg); // 메세지
-						console.log(replyJSON.boardList[0].boardNum); // 댓글 리스트 
+						
 						
 						alert(replyJSON.msg);
-						
-						var replysHtml ="";
+						if(replyJSON.boardList >0) {
+							
+							console.log(replyJSON.boardList[0].boardNum); // 댓글 리스트 
+							var replysHtml ="";
 						
 						for(var i=0 ; i<replyJSON.boardList.length;i++){
 							// 이전 댓글내용은 title 취소시 복원용 
@@ -342,11 +365,17 @@
 						
 						$("#replys").html(replysHtml);			
 				
+						
+						} // if
+						
 					}//success
 					
 				}); //ajax
 			}
-				
+			
+			//화면 현황 리프레시
+			location.reload();
+			
 			
 		});
 		
